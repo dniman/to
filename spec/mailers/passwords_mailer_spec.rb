@@ -7,7 +7,7 @@ RSpec.describe PasswordsMailer, type: :mailer do
     let(:mail) { PasswordsMailer.reset(user) }
 
     it "sends to the correct address" do
-      expect(mail.to).to eq(["test@example.com"])
+      expect(mail.to).to eq([ "test@example.com" ])
     end
 
     it "contains reset link" do
