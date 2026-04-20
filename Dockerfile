@@ -35,11 +35,6 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips libyaml-dev pkg-config unzip && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-ENV BUN_INSTALL=/usr/local/bun
-ENV PATH=/usr/local/bun/bin:$PATH
-ARG BUN_VERSION=1.3.5
-RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v${BUN_VERSION}"
-
 # Install application gems
 COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
@@ -49,7 +44,11 @@ RUN bundle install && \
     # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
     bundle exec bootsnap precompile -j 1 --gemfile
 
-# Install node modules
+# Install Bun and node modules
+ENV BUN_INSTALL=/usr/local/bun
+ENV PATH=/usr/local/bun/bin:$PATH
+COPY .bun-version ./
+RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v$(cat .bun-version)"
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 

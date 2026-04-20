@@ -82,6 +82,20 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+
+      - name: Install JS dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Precompile assets
+        run: bin/rails assets:precompile
+        env:
+          RAILS_ENV: test
+          SECRET_KEY_BASE_DUMMY: "1"
+
       - name: Prepare database
         run: bin/rails db:prepare
 
